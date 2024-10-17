@@ -9,7 +9,6 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from datetime import datetime, timedelta
-import json
 
 from dotenv import load_dotenv
 import os
@@ -31,6 +30,7 @@ app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 mysql = MySQL(app)
 
 # Google Drive API credentials file
+CREDENTIALS_FILE = './auth.json'
 CORS(app)
 # JWT Configuration
 jwt = JWTManager(app)
@@ -57,10 +57,7 @@ def login():
 
 # Add product
 SCOPES = ['https://www.googleapis.com/auth/drive.file']
-credentials_json = os.getenv('GOOGLE_APPLICATION_CREDENTIALS_JSON')
-
-credentials_info = json.loads(credentials_json)
-credentials = service_account.Credentials.from_service_account_file(credentials_info, scopes=SCOPES)
+credentials = service_account.Credentials.from_service_account_file(CREDENTIALS_FILE, scopes=SCOPES)
 service = build('drive', 'v3', credentials=credentials)
 
 # Function to upload file to Google Drive
