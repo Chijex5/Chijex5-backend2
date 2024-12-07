@@ -35,6 +35,28 @@ CORS(app)
 # JWT Configuration
 jwt = JWTManager(app)
 
+count_file = 'count.txt'
+def get_count():
+    try:
+        with open(count_file, 'r') as file:
+            return int(file.read())
+    except FileNotFoundError:
+        return 0  # Initial count
+    except ValueError:
+        return 0
+
+def save_count(count):
+    with open(count_file, 'w') as file:
+        file.write(str(count))
+
+@app.route('/', methods=['GET'])
+def home():
+    global count
+    count = get_count() + 1
+    save_count(count)
+    message = f"Welcome to the D'FOOTPRINTBackend API! This is for testing our API. We have made {count} successful calls."
+    return jsonify({'message': message}), 200
+    
 # Admin login
 @app.route('/login', methods=['POST'])
 def login():
