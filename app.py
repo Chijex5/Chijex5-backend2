@@ -128,7 +128,7 @@ def upload_image_to_drive(file):
 
 created_at = datetime.now()
 # Add product (with image upload to Google Drive)
-@app.route('/api/products', methods=['POST'])
+@app.route('/api/products/new', methods=['POST'])
 @jwt_required()
 def add_product():
     try:
