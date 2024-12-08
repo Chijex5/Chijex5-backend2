@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from collections import defaultdict
 from flask_cors import CORS
 from flask_mysqldb import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
