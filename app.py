@@ -57,7 +57,7 @@ def increment_count():
 
 @app.route('/', methods=['GET'])
 def home():
-    count = get_count
+    count = get_count()
     message = f"Welcome to the D'FOOTPRINTBackend API! This is for testing our API. We have made {count} successful calls."
     return jsonify({'message': message}), 200
     
