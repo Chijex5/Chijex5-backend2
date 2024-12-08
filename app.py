@@ -36,28 +36,51 @@ CORS(app)
 jwt = JWTManager(app)
 
 count_file = 'count.txt'
-def get_count():
+route_stats = defaultdict(int)  # Dictionary to hold counts for each route
+
+def get_total_count():
     try:
         with open(count_file, 'r') as file:
             return int(file.read())
     except FileNotFoundError:
-        return 0  # Initial count
+        return 226000
     except ValueError:
-        return 0
+        return 226000
 
-def save_count(count):
+def save_total_count(count):
     with open(count_file, 'w') as file:
         file.write(str(count))
 
 @app.before_request
-def increment_count():
-    # Increment the count for every request
-    count = get_count() + 1
-    save_count(count)
+def log_route_and_increment_count():
+    # Increment total count
+    global route_stats
+    total_count = get_total_count() + 1
+    save_total_count(total_count)
+
+    # Log route stats
+    route = request.path
+    route_stats[route] += 1
+
+@app.after_request
+def log_response_and_add_headers(response):
+    # Include the count in response headers
+    response.headers['X-Total-Request-Count'] = get_total_count()
+    response.headers['X-Route'] = request.path  # Log the current route
+    return response
+
+# Route to fetch stats for the dashboard
+@app.route('/stats', methods=['GET'])
+def get_stats():
+    total_requests = get_total_count()
+    return jsonify({
+        'total_requests': total_requests,
+        'routes': route_stats
+    })
 
 @app.route('/', methods=['GET'])
 def home():
-    count = get_count()
+    count = get_total_count()
     message = f"Welcome to the D'FOOTPRINTBackend API! This is for testing our API. We have made {count} successful calls."
     return jsonify({'message': message}), 200
     
