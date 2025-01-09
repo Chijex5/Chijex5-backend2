@@ -1,3 +1,4 @@
+from collections import defaultdict
 from flask import Flask, request, jsonify
 from collections import defaultdict
 from flask_cors import CORS
